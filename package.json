@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "homepage": "#",
+  "scripts": {
+    "prebase": "postcss --config src/base src/base/*.css --base src --dir dist",
+    "base": "cat dist/base/*.css > dist/base.css",
+    "postbase": "prejss-cli dist/base.css --format commonjs",
+    "preutilities": "postcss --config src/utilities src/utilities/*.css --base src --dir dist",
+    "utilities": "cat dist/utilities/*.css > dist/utilities.css",
+    "postutilities": "prejss-cli dist/utilities.css --format commonjs",
+    "components": "postcss --config src/components src/components/**/*.css --base src --dir dist",
+    "merge:styles": "cat dist/components/*.css > dist/styles.css",
+    "prejss": "prejss-cli dist/styles.css --format commonjs",
+    "themes": "postcss src/themes/index.css -o dist/themes.css --config src/themes",
+    "build": "npm run base && npm run utilities && npm run components && npm run merge:styles && npm run prejss && npm run themes"
+  },
+  "dependencies": {
+    "postcss": "^8.4.16",
+    "postcss-js": "^4.0.0",
+    "color": "^4.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.8",
+    "css-selector-tokenizer": "^0.8.0",
+    "postcss-cli": "8.3.0",
+    "postcss-import": "13.0.0",
+    "postcss-nested": "5.0.1",
+    "prejss-cli": "^0.3.3",
+    "tailwindcss": "^3.1.8"
+  },
+  "license": "MIT"
+}

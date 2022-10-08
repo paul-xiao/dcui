@@ -1,0 +1,3 @@
+.rounded-box {
+    border-radius: var(--rounded-box, 1rem);
+  }
