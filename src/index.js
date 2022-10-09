@@ -1,67 +1,72 @@
 const postcssJs = require("postcss-js")
 const postcssPrefix = require('./lib/postcss-prefixer')
 
-const dcvInfo = require("../package.json");
+const dcUIInfo = require("../package.json");
 const colors = require("./colors/index");
 const utilities = require("../dist/utilities");
 const base = require("../dist/base");
-const styled = require("../dist/styles");
+const unstyled = require("../dist/unstyled");
+const unstyledRtl = require("../dist/unstyled.rtl");
+const styled = require("../dist/styled");
+const styledRtl = require("../dist/styled.rtl");
+const utilitiesUnstyled = require("../dist/utilities-unstyled");
+const utilitiesStyled = require("../dist/utilities-styled");
 const themes = require("./colors/themes");
 const colorFunctions = require("./colors/functions");
 
 const mainFunction = ({ addBase, addComponents, addUtilities, config, postcss }) => {
-  let dcvIncludedItems = [];
+  let diasyuiIncludedItems = [];
   let logs = false;
-  if (config("dcv.logs") != false) {
+  if (config("dcUI.logs") != false) {
     logs = true;
   }
   if (logs) {
     console.log();
     console.log(
       "\x1b[35m%s\x1b[0m",
-      "dcv components " + dcvInfo.version,
+      "🔥 dcUI components " + dcUIInfo.version,
       "\x1b[0m",
-      dcvInfo.homepage
+      dcUIInfo.homepage
     );
     console.group();
   }
 
   // inject @base style
-  if (config("dcv.base") != false) {
+  if (config("dcUI.base") != false) {
     addBase(base);
-    dcvIncludedItems.push("base");
+    diasyuiIncludedItems.push("base");
   }
 
   // inject components
   // because rollupjs doesn't supprt dynamic require
   let file = styled;
-  if (config("dcv.styled") == false && config("dcv.rtl") != true) {
-    dcvIncludedItems.push("unstyled components");
+  if (config("dcUI.styled") == false && config("dcUI.rtl") != true) {
+    diasyuiIncludedItems.push("unstyled components");
     file = unstyled;
   } else if (
-    config("dcv.styled") == false &&
-    config("dcv.rtl") == true
+    config("dcUI.styled") == false &&
+    config("dcUI.rtl") == true
   ) {
-    dcvIncludedItems.push("unstyled components");
+    diasyuiIncludedItems.push("unstyled components");
     console.log("\x1b[36m%s\x1b[0m", " Direction:", "\x1b[0m", "RTL");
     file = unstyledRtl;
   } else if (
-    config("dcv.styled") != false &&
-    config("dcv.rtl") != true
+    config("dcUI.styled") != false &&
+    config("dcUI.rtl") != true
   ) {
-    dcvIncludedItems.push("components");
+    diasyuiIncludedItems.push("components");
     file = styled;
   } else if (
-    config("dcv.styled") !== false &&
-    config("dcv.rtl") == true
+    config("dcUI.styled") !== false &&
+    config("dcUI.rtl") == true
   ) {
-    dcvIncludedItems.push("components");
+    diasyuiIncludedItems.push("components");
     console.log("\x1b[36m%s\x1b[0m", " Direction:", "\x1b[0m", "RTL");
     file = styledRtl;
   }
 
   // add prefix to class names if specified
-  const prefix = config("dcv.prefix")
+  const prefix = config("dcUI.prefix")
   let postcssJsProcess
   if (prefix) {
     try {
@@ -80,31 +85,31 @@ const mainFunction = ({ addBase, addComponents, addUtilities, config, postcss })
   const themeInjector = colorFunctions.injectThemes(addBase, config, themes)
   themeInjector;
 
-  dcvIncludedItems.push("themes[" + themeInjector.themeOrder.length + "]");
+  diasyuiIncludedItems.push("themes[" + themeInjector.themeOrder.length + "]");
 
   // inject @utilities style needed by components
-  if (config("dcv.utils") != false) {
+  if (config("dcUI.utils") != false) {
     addComponents(utilities, { variants: ["responsive"] });
 
-    // let toAdd = utilitiesUnstyled // shadow clone here to avoid mutate the original
-    // if (shouldApplyPrefix) {
-    //   toAdd = postcssJsProcess(toAdd);
-    // }
-    // addComponents(toAdd, { variants: ["responsive"] });
+    let toAdd = utilitiesUnstyled // shadow clone here to avoid mutate the original
+    if (shouldApplyPrefix) {
+      toAdd = postcssJsProcess(toAdd);
+    }
+    addComponents(toAdd, { variants: ["responsive"] });
 
-    // toAdd = utilitiesStyled
-    // if (shouldApplyPrefix) {
-    //   toAdd = postcssJsProcess(toAdd);
-    // }
-    // addComponents(toAdd, { variants: ["responsive"] });
-    dcvIncludedItems.push("utilities");
+    toAdd = utilitiesStyled
+    if (shouldApplyPrefix) {
+      toAdd = postcssJsProcess(toAdd);
+    }
+    addComponents(toAdd, { variants: ["responsive"] });
+    diasyuiIncludedItems.push("utilities");
   }
   if (logs) {
     console.log(
       "\x1b[32m%s\x1b[0m",
       "✔︎ Including:",
       "\x1b[0m",
-      "" + dcvIncludedItems.join(", ")
+      "" + diasyuiIncludedItems.join(", ")
     );
     console.log();
     console.groupEnd();
