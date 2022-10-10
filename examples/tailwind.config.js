@@ -1,7 +1,7 @@
 module.exports = {
-  content: ['./src/**/*.{vue,js}'],
+  content: ['./src/**/*.{vue,js,md}'],
   theme: {
     extend: {}
   },
-  plugins: [require('../src')]
+  plugins: [require('@tailwindcss/typography'), require('../src')]
 }
